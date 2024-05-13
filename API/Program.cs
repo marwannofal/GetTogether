@@ -1,29 +1,23 @@
-using API.Data;
-using Microsoft.EntityFrameworkCore;
+using API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServiceExtensions(builder.Configuration);
 
-//connect the database with data entities and data in sql <3:
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DatingApp;Integrated Security=True");
-});
-builder.Services.AddCors();
-
-builder.Services.AddCors();
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
+// configure the HTTPS request pipeline
+app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod()
+    .WithOrigins("https://localhost:4200"));
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
 app.MapControllers();
-
 
 app.Run();
