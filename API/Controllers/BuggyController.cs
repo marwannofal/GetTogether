@@ -1,4 +1,3 @@
-
 using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet("not-found")]
-        public ActionResult<AppUser> GetSNotFound()
+        public ActionResult<AppUser> GetNotFound()
         {
             var thing = _context.Users.Find(-1);
 

@@ -13,7 +13,7 @@ namespace API.Extensions
             //connect the database with data entities and data in sql <3:
             services.AddDbContext<DataContext>(options =>
             {
-                options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DatingApp;Integrated Security=True");
+                options.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
