@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-photo-editor',
   templateUrl: './photo-editor.component.html',
-  styleUrl: './photo-editor.component.css'
+  styleUrls: ['./photo-editor.component.css']
 })
 export class PhotoEditorComponent implements OnInit {
   @Input() member: Member | undefined ;
@@ -70,7 +70,7 @@ export class PhotoEditorComponent implements OnInit {
       allowedFileType: ['image'],
       removeAfterUpload: true,
       autoUpload: false,
-      maxFileSize: 10 * 10 * 1024
+      maxFileSize: 10 * 1024 * 1024
     })
 
     this.uploader.onAfterAddingFile = (file) => {
@@ -81,6 +81,11 @@ export class PhotoEditorComponent implements OnInit {
       if (response){
         const photo = JSON.parse(response);
         this.member?.photos.push(photo);
+        if (photo.isMain && this.user && this.member) {
+          this.user.photoUrl = photo.url;
+          this.member.photoUrl = photo.url;
+          this.accountService.setCurrentUser(this.user);
+        }
       }
     }
   }
