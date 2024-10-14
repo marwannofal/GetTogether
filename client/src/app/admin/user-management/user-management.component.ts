@@ -4,11 +4,14 @@ import { initialState } from 'ngx-bootstrap/timepicker/reducer/timepicker.reduce
 import { User } from 'src/app/_models/user';
 import { AdminService } from 'src/app/_services/admin.service';
 import { RolesModalsComponent } from 'src/app/modals/roles-modals/roles-modals.component';
+import { NgFor } from '@angular/common';
 
 @Component({
-  selector: 'app-user-management',
-  templateUrl: './user-management.component.html',
-  styleUrls: ['./user-management.component.css']
+    selector: 'app-user-management',
+    templateUrl: './user-management.component.html',
+    styleUrls: ['./user-management.component.css'],
+    standalone: true,
+    imports: [NgFor]
 })
 export class UserManagementComponent implements OnInit{
   users: User[] = [];
