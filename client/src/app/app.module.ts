@@ -28,6 +28,7 @@ import { HasRoleDirective } from './_directives/has-role.directive';
 import { UserManagementComponent } from './admin/user-management/user-management.component';
 import { PhotoManagementComponent } from './admin/photo-management/photo-management.component';
 import { RolesModalsComponent } from './modals/roles-modals/roles-modals.component';
+import { RouteReuseStrategy } from '@angular/router';
 
 @NgModule({ 
     declarations: [
