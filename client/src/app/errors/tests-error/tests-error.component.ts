@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { NgIf, NgFor } from '@angular/common';
 
 @Component({
@@ -10,11 +10,10 @@ import { NgIf, NgFor } from '@angular/common';
     imports: [NgIf, NgFor]
 })
 export class TestsErrorComponent implements OnInit {
+  private http = inject(HttpClient);
   baseUrl = 'https://localhost:5001/api/';
   validationErrors: string[] = [];
-  
-  constructor(private http: HttpClient) { }
-  
+    
   ngOnInit(): void {
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { initialState } from 'ngx-bootstrap/timepicker/reducer/timepicker.reducer';
 import { User } from 'src/app/_models/user';
@@ -14,6 +14,9 @@ import { NgFor } from '@angular/common';
     imports: [NgFor]
 })
 export class UserManagementComponent implements OnInit{
+  private modalService = inject(BsModalService);
+  private adminService = inject(AdminService);
+
   users: User[] = [];
   bsModalRef: BsModalRef<RolesModalsComponent> = new BsModalRef<RolesModalsComponent>();
   availableRoles = [
@@ -21,8 +24,6 @@ export class UserManagementComponent implements OnInit{
     'Moderator',
     'Member'
   ]
-
-  constructor(private adminService: AdminService, private modalService: BsModalService) { }
   
   ngOnInit(): void {
     this.getUsersWithRoles();
