@@ -13,7 +13,7 @@ import { RouterOutlet } from '@angular/router';
     imports: [NgxSpinnerComponent, NavComponent, RouterOutlet]
 })
 export class AppComponent implements OnInit {
-  title = 'Dating App';
+  title = 'Get Together';
 
   constructor (private accountSevice: AccountService) {}
 

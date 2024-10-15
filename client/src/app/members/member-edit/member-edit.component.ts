@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { Member } from 'src/app/_models/member';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
@@ -19,22 +19,18 @@ import { TimeagoModule } from 'ngx-timeago';
     imports: [NgIf, TabsModule, FormsModule, PhotoEditorComponent, DatePipe, TimeagoModule]
 })
 export class MemberEditComponent implements OnInit {
+  private accountService = inject(AccountService);
+  private toastr = inject(ToastrService);
+  private memberService = inject(MembersService); 
   @ViewChild('editForm') editForm: NgForm | undefined;
+  member: Member | undefined;
+  user = this.accountService.currentUser()
   @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
     if (this.editForm?.dirty) {
       $event.returnValue = true;
     }
   }
-  member: Member | undefined;
-  user: User | null = null;
-
-  constructor(private accountService: AccountService, private memberService: MembersService, 
-    private toastr: ToastrService) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe({
-      next: user => this.user = user
-    })
-  }
-
+  
   ngOnInit(): void {
     this.loadMember()
   }
