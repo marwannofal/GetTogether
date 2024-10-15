@@ -7,23 +7,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
-    public class LikesRepository : ILikesRepository
+    public class LikesRepository(DataContext context) : ILikesRepository
     {
-        private readonly DataContext _context;
-        public LikesRepository(DataContext context)
-        {
-            _context = context;
-        }
-
         public async Task<UserLike> GetUserLike(int sourceUserId, int targetUserId)
         {
-            return await _context.Likes.FindAsync(sourceUserId, targetUserId);
+            return await context.Likes.FindAsync(sourceUserId, targetUserId);
         }
 
         public async Task<PagedList<LikeDto>> GetUserLikes(LikesParams likesParams)
         {
-            var users = _context.Users.OrderBy(u => u.UserName).AsQueryable();
-            var likes = _context.Likes.AsQueryable();
+            var users = context.Users.OrderBy(u => u.UserName).AsQueryable();
+            var likes = context.Likes.AsQueryable();
 
             if (likesParams.Predicate == "liked")
             {
@@ -52,7 +46,7 @@ namespace API.Data
 
         public async Task<AppUser> GetUserWithLikes(int userId)
         {
-            return await _context.Users
+            return await context.Users
                 .Include(x => x.LikedUsers)
                 .FirstOrDefaultAsync(x => x.Id == userId);
         }
