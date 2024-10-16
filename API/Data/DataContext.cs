@@ -7,10 +7,11 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
         IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, 
         IdentityRoleClaim<int>, IdentityUserToken<int>>
 {
-        public DataContext(DbContextOptions options) : base(options)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
 
+        public DbSet<Photo> Photos { get; set; }
         public DbSet<UserLike> Likes{ get; set; }
         public DbSet<Message> Messages{ get; set; }
         public DbSet<Group> Groups{ get; set; }
@@ -47,7 +48,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
                         .HasOne(s => s.TargetUser)
                         .WithMany(l => l.LikedByUsers)
                         .HasForeignKey(s => s.TargetUserId)
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                 builder.Entity<Message>()
                         .HasOne(u => u.Recipient)
@@ -58,7 +59,12 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
                         .HasOne(u => u.Sender)
                         .WithMany(m => m.MessagesSent)
                         .OnDelete(DeleteBehavior.Restrict);
-                
 
+                builder.Entity<Message>()
+                        .HasOne(u => u.Sender)
+                        .WithMany(m => m.MessagesSent)
+                        .OnDelete(DeleteBehavior.Restrict);
+                
+                builder.Entity<Photo>().HasQueryFilter(p => p.IsApproved);
         }
 }

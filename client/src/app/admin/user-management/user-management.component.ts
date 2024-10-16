@@ -1,16 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { initialState } from 'ngx-bootstrap/timepicker/reducer/timepicker.reducer';
 import { User } from 'src/app/_models/user';
 import { AdminService } from 'src/app/_services/admin.service';
 import { RolesModalsComponent } from 'src/app/modals/roles-modals/roles-modals.component';
+import { NgFor } from '@angular/common';
 
 @Component({
-  selector: 'app-user-management',
-  templateUrl: './user-management.component.html',
-  styleUrls: ['./user-management.component.css']
+    selector: 'app-user-management',
+    templateUrl: './user-management.component.html',
+    styleUrls: ['./user-management.component.css'],
+    standalone: true,
+    imports: [NgFor]
 })
 export class UserManagementComponent implements OnInit{
+  private modalService = inject(BsModalService);
+  private adminService = inject(AdminService);
+
   users: User[] = [];
   bsModalRef: BsModalRef<RolesModalsComponent> = new BsModalRef<RolesModalsComponent>();
   availableRoles = [
@@ -18,8 +24,6 @@ export class UserManagementComponent implements OnInit{
     'Moderator',
     'Member'
   ]
-
-  constructor(private adminService: AdminService, private modalService: BsModalService) { }
   
   ngOnInit(): void {
     this.getUsersWithRoles();

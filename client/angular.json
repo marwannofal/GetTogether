@@ -14,7 +14,8 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": {
-              "base": "dist/client"
+              "base": "../API/wwwroot",
+              "browser": ""
             },
             "index": "src/index.html",
             "polyfills": [
@@ -29,7 +30,7 @@
               "node_modules/ngx-spinner/animations/ball-grid-pulse.css",
               "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/bootswatch/dist/sketchy/bootstrap.css",
+              "node_modules/bootswatch/dist/minty/bootstrap.css",
               "node_modules/font-awesome/css/font-awesome.min.css",
               "node_modules/ngx-toastr/toastr.css",
               "src/styles.css"
@@ -51,6 +52,11 @@
                   "maximumError": "2.5MB"
                 }
               ],
+              "optimization": {
+                "styles": {
+                  "inlineCritical": false
+                }
+              },
               "outputHashing": "all"
             },
             "development": {

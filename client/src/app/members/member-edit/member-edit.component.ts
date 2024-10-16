@@ -1,34 +1,36 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { Member } from 'src/app/_models/member';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
 import { take } from 'rxjs';
 import { MembersService } from 'src/app/_services/members.service';
 import { ToastrService } from 'ngx-toastr';
-import { NgForm } from '@angular/forms';
+import { NgForm, FormsModule } from '@angular/forms';
+import { NgIf, DatePipe } from '@angular/common';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { PhotoEditorComponent } from '../photo-editor/photo-editor.component';
+import { TimeagoModule } from 'ngx-timeago';
 
 @Component({
-  selector: 'app-member-edit',
-  templateUrl: './member-edit.component.html',
-  styleUrl: './member-edit.component.css'
+    selector: 'app-member-edit',
+    templateUrl: './member-edit.component.html',
+    styleUrl: './member-edit.component.css',
+    standalone: true,
+    imports: [NgIf, TabsModule, FormsModule, PhotoEditorComponent, DatePipe, TimeagoModule]
 })
 export class MemberEditComponent implements OnInit {
+  private accountService = inject(AccountService);
+  private toastr = inject(ToastrService);
+  private memberService = inject(MembersService); 
   @ViewChild('editForm') editForm: NgForm | undefined;
+  member: Member | undefined;
+  user = this.accountService.currentUser()
   @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
     if (this.editForm?.dirty) {
       $event.returnValue = true;
     }
   }
-  member: Member | undefined;
-  user: User | null = null;
-
-  constructor(private accountService: AccountService, private memberService: MembersService, 
-    private toastr: ToastrService) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe({
-      next: user => this.user = user
-    })
-  }
-
+  
   ngOnInit(): void {
     this.loadMember()
   }

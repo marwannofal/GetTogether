@@ -8,35 +8,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
-    public class MessageRepository : IMessageRepository
+    public class MessageRepository(DataContext context, IMapper mapper) : IMessageRepository
     {
-        private readonly DataContext _context;
-        private readonly IMapper _mapper;
-
-        public MessageRepository(DataContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-
         public void AddMessage(Message message)
         {
-            _context.Messages.Add(message);
+            context.Messages.Add(message);
         }
 
         public void DeleteMessage(Message message)
         {
-            _context.Messages.Remove(message);
+            context.Messages.Remove(message);
         }
 
         public async Task<Message> GetMessage(int id)
         {
-            return await _context.Messages.FindAsync(id);
+            return await context.Messages.FindAsync(id);
         }
 
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
         {
-            var query = _context.Messages
+            var query = context.Messages
                 .OrderByDescending(x => x.MessageSent)
                 .AsQueryable();
 
@@ -50,7 +41,7 @@ namespace API.Data
                     && u.RecipientDeleted == false && u.DateRead == null)
             };
 
-            var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
+            var messages = query.ProjectTo<MessageDto>(mapper.ConfigurationProvider);
 
             return await PagedList<MessageDto>
                 .CreateAsync(messages, messageParams.pageNumber, messageParams.PageSize);
@@ -58,7 +49,7 @@ namespace API.Data
 
         public async Task<IEnumerable<MessageDto>> GetMessagesThread(string currentUserName, string recipientUserName)
         {
-            var messages = await _context.Messages
+            var messages = await context.Messages
                 .Include(u => u.Sender).ThenInclude(p => p.Photos)
                 .Include(u => u.Recipient).ThenInclude(p => p.Photos)
                 .Where(
@@ -81,43 +72,37 @@ namespace API.Data
                 {
                     message.DateRead = DateTime.Now;
                 }
-
-                await _context.SaveChangesAsync();
             }
 
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            return mapper.Map<IEnumerable<MessageDto>>(messages);
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }   
         //==========================================================
         public void AddGroup(Group group)
         {
-            _context.Groups.Add(group);
+            context.Groups.Add(group);
         } 
 
         public void RemoveConnection(Connection connection)
         {
-            _context.Connections.Remove(connection);
+            context.Connections.Remove(connection);
         }
 
         public async Task<Connection> GetConnection(string connectionId)
         {
-            return await _context.Connections.FindAsync(connectionId);
+            return await context.Connections.FindAsync(connectionId);
         }
 
         public async Task<Group> GetMessageGroup(string groupName)
         {
-            return await _context.Groups
+            return await context.Groups
                 .Include(x => x.Connections)
                 .FirstOrDefaultAsync(x => x.Name == groupName);
         }
 
         public async Task<Group> GetGroupForConnection(string connectionId)
         {
-            return await _context.Groups
+            return await context.Groups
                 .Include(x => x.Connections)
                 .Where(x => x.Connections.Any(c => c.ConnectionId == connectionId))
                 .FirstOrDefaultAsync();

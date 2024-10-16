@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 import { TabDirective, TabsetComponent, TabsModule } from 'ngx-bootstrap/tabs';
@@ -23,22 +23,18 @@ import { ToastrService } from 'ngx-toastr';
   imports: [CommonModule, TabsModule, GalleryModule, TimeagoModule, MemberMessagesComponent]
 })
 export class MemberDetailComponent implements OnInit, OnDestroy {
+  private accountService = inject(AccountService);
+  private route = inject(ActivatedRoute);
+  private messageService = inject(MessageService);
+  public presenceService = inject(PresenceService);
+  private memberService = inject(MembersService) 
+  private toastr = inject(ToastrService);
   @ViewChild('memberTabs', {static:true}) memberTabs?: TabsetComponent;
   member: Member = {} as Member;
   images: GalleryItem[] = [];
   activeTab: TabDirective | undefined;
   messages: Message[] = [] ;
-  user?: User;
-
-  constructor(private accountService: AccountService, private route: ActivatedRoute,
-    private messageService: MessageService, public presenceService: PresenceService, 
-      private memberService: MembersService, private toastr: ToastrService) { 
-      this.accountService.currentUser$.pipe(take(1)).subscribe({
-        next: user => {
-          if (user) this.user = user;
-        }
-      })
-    }
+  user = this.accountService.currentUser();
 
   ngOnInit(): void {
     this.route.data.subscribe({

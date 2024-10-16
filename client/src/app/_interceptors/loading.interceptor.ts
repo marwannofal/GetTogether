@@ -1,22 +1,18 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { delay, finalize, Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { delay, finalize, identity } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { BusyService } from '../_services/busy.service';
 
+export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
+  const busyService = inject(BusyService);
 
-@Injectable()
-export class LoadingInterceptor implements HttpInterceptor {
+  busyService.busy();
 
-  constructor(private busyService: BusyService) { }
-
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    this.busyService.busy();
-
-    return next.handle(request).pipe(
-      delay(1000),
+  return next(req).pipe(
+    (environment.production ? identity : delay(1000)),
       finalize(() => {
-        this.busyService.idle()
+        busyService.idle()
       })
-    )
-  }
+  )
 }

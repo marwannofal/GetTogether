@@ -12,24 +12,21 @@ namespace API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,
             IConfiguration config)
         {
-            //connect the database with data entities and data in sql <3:
-            services.AddDbContext<DataContext>(options =>
-            {
-                options.UseSqlite(config.GetConnectionString("DefaultConnection"));
-            });
-            services.AddCors();
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IUserRepository, UserRepository>();
+            //connect the database with data entities and data in sqlite <3:
+            services.AddDbContext<DataContext>(options =>{ options.UseSqlServer(config.GetConnectionString("DefaultConnection"));});
+            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));    
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
-            services.AddScoped<IPhotoService, PhotoService>();
-            services.AddScoped<LogUserActivity>();
-            services.AddScoped<ILikesRepository, LikesRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
-            services.AddSignalR();
+            services.AddScoped<IPhotoRepository, PhotoRepository>();
+            services.AddScoped<ILikesRepository, LikesRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPhotoService, PhotoService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();            
             services.AddSingleton<PresenceTracker>();
-
-
+            services.AddScoped<LogUserActivity>();
+            services.AddSignalR();
+            services.AddCors();
             return services;
         }
     }
