@@ -13,7 +13,7 @@ namespace API.Extensions
             IConfiguration config)
         {
             //connect the database with data entities and data in sqlite <3:
-            services.AddDbContext<DataContext>(options =>{ options.UseSqlite(config.GetConnectionString("DefaultConnection"));});
+            services.AddDbContext<DataContext>(options =>{ options.UseSqlServer(config.GetConnectionString("DefaultConnection"));});
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));    
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IMessageRepository, MessageRepository>();
